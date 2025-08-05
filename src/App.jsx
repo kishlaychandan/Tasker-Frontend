@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-
+import './App.css';
 function App() {
   const [smsList, setSmsList] = useState([]);
   const [loading, setLoading] = useState(true);
