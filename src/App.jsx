@@ -3,7 +3,7 @@ import './App.css';
 function App() {
   const [smsList, setSmsList] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null); // 🔴 new state for error
+  const [error, setError] = useState(null);
 
 
   useEffect(() => {
@@ -16,7 +16,7 @@ function App() {
       .catch((err) => {
         console.error('Error fetching SMS:', err);
         setLoading(false);
-        setError('Failed to fetch messages. Server might be waking up or offline.');
+        setError(err.message);
       });
   }, []);
 
