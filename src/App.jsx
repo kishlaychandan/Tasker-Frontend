@@ -1,52 +1,41 @@
-import { useState, useEffect } from 'react';
-import './App.css';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+
+import Footer from './components/Footer';
+import SMSList from './components/SMSList';
+import Dashboard from './components/Dashboard';
+import { useState,useEffect } from 'react';
+import Navbar from './components/Navbar';
+
 function App() {
-  const [smsList, setSmsList] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+    const [theme, setTheme] = useState('light');
 
-
+  // On initial load, read or set default theme
   useEffect(() => {
-    fetch('https://tasker-backend-2hgl.onrender.com/api/sms')
-      .then((res) => res.json())
-      .then((data) => {
-        setSmsList(data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error('Error fetching SMS:', err);
-        setLoading(false);
-        setError(err.message);
-      });
+    const stored = localStorage.getItem('theme');
+    if (stored === 'dark' || stored === 'light') {
+      setTheme(stored);
+      document.documentElement.classList.toggle('dark', stored === 'dark');
+    } else {
+      localStorage.setItem('theme', 'light');
+      document.documentElement.classList.remove('dark');
+    }
   }, []);
 
- return (
-    <div style={{ padding: '1rem', fontFamily: 'Arial, sans-serif' }}>
-      <h1>Received SMS Messages</h1>
+  return (
+    <Router>
+      <div className="flex flex-col min-h-screen">
+        <Navbar/>
 
-      {loading ? (
-        <p>
-          Loading messages, please wait...<br />
-          <small style={{ color: '#777' }}>
-            Server is hosted on <strong>Render (Free Tier)</strong>. It may take up to 2 minutes to wake up after inactivity.
-          </small>
-        </p>
-      ) : error ? (
-        <p style={{ color: 'red' }}>{error}</p>
-      ) : smsList.length === 0 ? (
-        <p>No SMS messages received yet.</p>
-      ) : (
-        <ul>
-          {smsList.map((sms) => (
-            <li key={sms._id} style={{ marginBottom: '1rem' }}>
-              <strong>From:</strong> {sms.sender}<br />
-              <strong>Message:</strong> {sms.message}<br />
-              <small>{new Date(sms.timestamp).toLocaleString()}</small>
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
+        {/* <main className="flex-grow"> */}
+          <Routes>
+            <Route path="/" element={<Dashboard/>} />
+            <Route path="/sms" element={<SMSList />} />
+          </Routes>
+        {/* </main> */}
+
+        <Footer />
+      </div>
+    </Router>
   );
 }
 
