@@ -25,7 +25,7 @@ function Navbar() {
     document.documentElement.classList.toggle('dark', next === 'dark');
   };
   const login=()=>{
-    alert("feature not created now");
+    alert("feature in progress...");
   }
 
   return (
