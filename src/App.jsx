@@ -3,6 +3,8 @@ import './App.css';
 function App() {
   const [smsList, setSmsList] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null); // 🔴 new state for error
+
 
   useEffect(() => {
     fetch('https://tasker-backend-2hgl.onrender.com/api/sms')
@@ -14,19 +16,25 @@ function App() {
       .catch((err) => {
         console.error('Error fetching SMS:', err);
         setLoading(false);
+        setError('Failed to fetch messages. Server might be waking up or offline.');
       });
   }, []);
 
-  return (
+ return (
     <div style={{ padding: '1rem', fontFamily: 'Arial, sans-serif' }}>
       <h1>Received SMS Messages</h1>
+
       {loading ? (
         <p>
           Loading messages, please wait...<br />
           <small style={{ color: '#777' }}>
-            Server is hosted on <strong>Render ( Free Tier ) </strong>. It may take up to 2 minutes to wake up after inactivity.
+            Server is hosted on <strong>Render (Free Tier)</strong>. It may take up to 2 minutes to wake up after inactivity.
           </small>
         </p>
+      ) : error ? (
+        <p style={{ color: 'red' }}>{error}</p>
+      ) : smsList.length === 0 ? (
+        <p>No SMS messages received yet.</p>
       ) : (
         <ul>
           {smsList.map((sms) => (
