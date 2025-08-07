@@ -11,47 +11,80 @@ function SMSList() {
     const [error, setError] = useState('');
     const [filters, setFilters] = useState({ sender: '', receiver: '', message: '' });
 
+    // useEffect(() => {
+    //     setLoading(true);
+    //     setError('');
+
+    //     // const dummyMessages = Array.from({ length: 33 }, (_, i) => ({
+    //     //     id: i + 1,
+    //     //     sender: `Sender ${i + 1}`,
+    //     //     receiver: `Receiver ${i + 1}`,
+    //     //     message: `This is message number ${i + 1} for board ${i % 3 === 0 ? 'Alpha' : 'Beta'}`,
+    //     //     timestamp: new Date().toISOString()
+    //     // }));
+
+    //     // setTimeout(() => {
+    //     //     const start = (page - 1) * limit;
+    //     //     const end = start + limit;
+    //     //     const paginated = dummyMessages.slice(start, end);
+
+    //     //     setSmsList(paginated);
+    //     //     setTotal(dummyMessages.length);
+    //     //     setLoading(false);
+    //     // }, 500); // simulate a small loading delay
+
+    //     fetch(`https://tasker-backend-2hgl.onrender.com/api/sms?page=${page}&limit=${limit}`)
+    //         .then((res) => res.json())
+    //         .then((data) => {
+    //             if (data && Array.isArray(data.messages)) {
+    //                 setSmsList(data.messages);
+    //                 setTotal(data.total || 0);
+    //             } else {
+    //                 setError("Unexpected response from server.");
+    //                 setSmsList([]);
+    //                 setTotal(0);
+    //             }
+    //             setLoading(false);
+    //         })
+    //         .catch((err) => {
+    //             console.error('Error fetching SMS:', err);
+    //             setError("Failed to load data.");
+    //             setLoading(false);
+    //         });
+    // }, [page]);
+
     useEffect(() => {
-        setLoading(true);
-        setError('');
+  setLoading(true);
+  setError('');
 
-        // const dummyMessages = Array.from({ length: 33 }, (_, i) => ({
-        //     id: i + 1,
-        //     sender: `Sender ${i + 1}`,
-        //     receiver: `Receiver ${i + 1}`,
-        //     message: `This is message number ${i + 1} for board ${i % 3 === 0 ? 'Alpha' : 'Beta'}`,
-        //     timestamp: new Date().toISOString()
-        // }));
+  const params = new URLSearchParams({
+    page,
+    limit,
+    sender: filters.sender,
+    receiver: filters.receiver,
+    message: filters.message,
+  });
 
-        // setTimeout(() => {
-        //     const start = (page - 1) * limit;
-        //     const end = start + limit;
-        //     const paginated = dummyMessages.slice(start, end);
+  fetch(`https://tasker-backend-2hgl.onrender.com/api/sms?${params.toString()}`)
+    .then((res) => res.json())
+    .then((data) => {
+      if (data && Array.isArray(data.messages)) {
+        setSmsList(data.messages);
+        setTotal(data.total || 0);
+      } else {
+        setError("Unexpected response from server.");
+        setSmsList([]);
+        setTotal(0);
+      }
+      setLoading(false);
+    })
+    .catch((err) => {
+      console.error('Error fetching SMS:', err);
+      setError("Failed to load data.");
+      setLoading(false);
+    });
+}, [page, filters]);
 
-        //     setSmsList(paginated);
-        //     setTotal(dummyMessages.length);
-        //     setLoading(false);
-        // }, 500); // simulate a small loading delay
-
-        fetch(`https://tasker-backend-2hgl.onrender.com/api/sms?page=${page}&limit=${limit}`)
-            .then((res) => res.json())
-            .then((data) => {
-                if (data && Array.isArray(data.messages)) {
-                    setSmsList(data.messages);
-                    setTotal(data.total || 0);
-                } else {
-                    setError("Unexpected response from server.");
-                    setSmsList([]);
-                    setTotal(0);
-                }
-                setLoading(false);
-            })
-            .catch((err) => {
-                console.error('Error fetching SMS:', err);
-                setError("Failed to load data.");
-                setLoading(false);
-            });
-    }, [page]);
 
     useEffect(() => {
         const filtered = smsList.filter(sms => {
